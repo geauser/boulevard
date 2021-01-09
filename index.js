@@ -2,14 +2,22 @@ const express = require('express');
 const fs      = require('fs-jetpack');
 
 
-function createRouter(routesPath, matching = '**/*.js') {
+function build({
+  dir,
+  pattern = '**/*.js',
+  layers = ['middlewares', 'validators'],
+}) {
 
   const router = express.Router();
   const files  = [];
 
-  fs.cwd(routesPath).find({ matching }).forEach((fileName) => {
+  /**
+   * Retrieve all the routing files corresponding with the Glob
+   * pattern.
+   */
+  fs.cwd(dir).find({ matching: pattern }).forEach((fileName) => {
 
-    const path = `${routesPath}/${fileName}`;
+    const path = `${dir}/${fileName}`;
 
     files.push({
       path,
@@ -18,27 +26,37 @@ function createRouter(routesPath, matching = '**/*.js') {
 
   });
 
+  if (!files.length) { console.warn('No routing files found.'); }
 
   files.forEach((file) => {
 
     file.routes.forEach((route) => {
 
-      if (!route.method) {
-        throw new Error(`Missing 'method' in file: '${file.path}'\n`);
+      switch (true) {
+        case !route.method:  throw new Error(`Missing 'method' in '${file.path}'`);
+        case !route.path:    throw new Error(`Missing 'path' in '${file.path}'`);
+        case !route.handler: throw new Error(`Missing 'handler' in '${file.path}'`);
       }
 
-      if (!route.path) {
-        throw new Error(`Missing 'path' in file: '${file.path}'\n`);
-      }
+      const middlewares = [];
 
-      if (!route.handler) {
-        throw new Error(`Missing 'handler' in file: '${file.path}'\n`);
-      }
+      /**
+       * Concat in one array all the middleware functions of each
+       * custom layers passed in parameter.
+       *
+       * For example if the given layers are:
+       * ['a', 'b', 'c']
+       * functions will be executed in each layer, in the
+       * natural order and each layer will be executed as
+       * they appear in the 'layers' parameter.
+       */
+      layers.forEach(layer => {
+        middlewares.push(...(route[layer] || []));
+      });
 
-      route.validators  = route.validators  || [];
-      route.middlewares = route.middlewares || [];
-
-      router[route.method.toLowerCase()](route.path, route.validators.concat(route.middlewares).concat([route.handler]));
+      // Make sure the given request method is in lowercase
+      const method = route.method.toLowerCase();
+      router[method](route.path, middlewares);
     });
 
   });
@@ -46,4 +64,4 @@ function createRouter(routesPath, matching = '**/*.js') {
   return router;
 }
 
-module.exports = { createRouter };
+module.exports = { build };
