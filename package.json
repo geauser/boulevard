@@ -1,10 +1,14 @@
 {
   "name": "@geauser/boulevard",
   "version": "1.1.0",
-  "description": "Easy express.js router generator",
+  "description": "Express.js router generator",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/geauser/boulevard"
   },
   "author": "geauser <geauser@protonmail.com>",
   "license": "ISC",
