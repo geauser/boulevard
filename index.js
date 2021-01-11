@@ -56,7 +56,7 @@ function build({
 
       // Make sure the given request method is in lowercase
       const method = route.method.toLowerCase();
-      router[method](route.path, middlewares);
+      router[method](route.path, middlewares, route.handler);
     });
 
   });
