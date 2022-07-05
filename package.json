@@ -1,19 +1,37 @@
 {
   "name": "@geauser/boulevard",
-  "version": "1.1.2",
-  "description": "Express.js router generator",
-  "main": "index.js",
+  "version": "2.0.0",
+  "description": "Quick and easy Express.js router generator.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "keywords": [
+    "express",
+    "router",
+    "routes",
+    "routing",
+    "generator"
+  ],
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/geauser/boulevard"
   },
   "author": "geauser <geauser@protonmail.com>",
-  "license": "ISC",
+  "license": "MIT",
+  "peerDependencies": {
+    "express": "^4.18.1"
+  },
   "dependencies": {
-    "express": "^4.17.1",
-    "fs-jetpack": "^2.2.3"
+    "fs-jetpack": "^4.3.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "typescript": "^4.7.4"
   }
 }
